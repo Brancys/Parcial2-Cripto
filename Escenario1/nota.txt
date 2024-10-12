@@ -1,3 +1,0 @@
-En este Escenario se utilizó SHA-256 como parte del proceso de Key Derivation Function (KDF), 
-lo que significa que su función es derivar una llave simétrica a partir del secreto compartido 
-generado por el protocolo Diffie-Hellman.

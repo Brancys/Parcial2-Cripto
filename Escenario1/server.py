@@ -6,12 +6,12 @@ from Crypto.Random import get_random_bytes
 import json
 
 # Obtener la ruta del archivo JSON de manera relativa
-def load_parameters():
+def load_parameters(i):
     base_dir = os.path.dirname(os.path.abspath(__file__))  # Directorio actual del archivo
     filename = os.path.join(base_dir, "parameters.json")  # Ruta relativa segura
     with open(filename, "r") as file:
         data = json.load(file)
-    return data["parameters"][0]  # Usamos el primer conjunto de parámetros
+    return data["parameters"][i]  # Usamos el i conjunto de parámetros
 
 # Función para generar llaves públicas y privadas con q
 def diffie_hellman_keypair(p, g, q):
@@ -19,7 +19,7 @@ def diffie_hellman_keypair(p, g, q):
     public_key = pow(g, private_key, p)  # g^private_key mod p
     return private_key, public_key
 
-# Función para generar la llave simétrica compartida
+# En este Escenario se utilizó SHA-256 como parte del proceso de Key Derivation Function (KDF)
 def generate_shared_key(private_key, public_key_received, p):
     shared_secret = pow(public_key_received, private_key, p)
     shared_key = sha256(str(shared_secret).encode()).digest()
@@ -39,8 +39,8 @@ def decrypt_message(shared_key, ciphertext):
     plaintext = cipher.decrypt(ciphertext)
     return plaintext.decode()
 
-# Cargar parámetros desde el archivo JSON
-params = load_parameters()
+# Cargar el conjunto de parametros i desde el archivo JSON
+params = load_parameters(0) # Se usa el conjunto 0 de parámetros en este caso
 p = params["p"]
 g = params["g"]
 q = params["q"]
