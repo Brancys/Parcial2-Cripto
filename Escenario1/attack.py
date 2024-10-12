@@ -45,19 +45,15 @@ def baby_step_giant_step_with_timeout(p, g, h, time_limit):
 # Intentar resolver el problema del logaritmo discreto para obtener la llave privada del servidor
 private_key_server = baby_step_giant_step_with_timeout(p, g, public_key_server, time_limit)
 
-# Verificar si se encontró la llave privada del servidor dentro del tiempo límite
 if private_key_server is not None:
     print(f"El atacante encontró la llave privada del servidor: {private_key_server}")
     
-    # Calcular el secreto compartido
     shared_secret = pow(public_key_client, private_key_server, p)
     print(f"El secreto compartido es: {shared_secret}")
 
-    # Aplicar la KDF conocida (SHA-256) para derivar la llave simétrica
     shared_key = sha256(str(shared_secret).encode()).digest()
     print(f"La llave simétrica derivada es: {shared_key}")
 
-    # Intentar descifrar el mensaje capturado usando Salsa20
     cipher = Salsa20.new(key=shared_key, nonce=nonce)
     plaintext = cipher.decrypt(ciphertext)
     print(f"Mensaje descifrado: {plaintext.decode()}")
