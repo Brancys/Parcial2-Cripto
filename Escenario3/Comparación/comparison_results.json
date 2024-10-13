@@ -1,0 +1,22 @@
+{
+    "ElGamal": {
+        "encryption_time": 0.005999326705932617,
+        "decryption_time": 0.0070002079010009766,
+        "encrypted_message_size": 616
+    },
+    "Salsa20": {
+        "encryption_time": 0.0010006427764892578,
+        "decryption_time": 0.0,
+        "encrypted_message_size": 137
+    },
+    "AES-256": {
+        "encryption_time": 0.0,
+        "decryption_time": 0.0,
+        "encrypted_message_size": 144
+    },
+    "RSA_OAEP": {
+        "encryption_time": 0.0010004043579101562,
+        "decryption_time": 0.002998828887939453,
+        "encrypted_message_size": 256
+    }
+}
