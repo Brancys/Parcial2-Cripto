@@ -5,7 +5,7 @@ import socket
 
 current_directory = os.path.dirname(os.path.abspath(__file__))
 
-private_key_path = os.path.join(current_directory, "private_elgamal.json")
+private_key_path = os.path.join(current_directory, "keys/sk.json")
 with open(private_key_path, "r") as f:
     private_key_data = json.load(f)
 
@@ -16,7 +16,7 @@ private_key = ElGamal.construct((
     int(private_key_data['x'], 16)
 ))
 
-public_key_path = os.path.join(current_directory, "public_elgamal.json")
+public_key_path = os.path.join(current_directory, "keys/pk.json")
 with open(public_key_path, "r") as f:
     public_key_data = json.load(f)
 

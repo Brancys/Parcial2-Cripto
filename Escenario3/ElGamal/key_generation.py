@@ -21,11 +21,11 @@ public_key_data = {
 }
 
 # Guardar la clave privada
-with open("Escenario3/ElGamal/sk.json", "w") as f:
+with open("Escenario3/ElGamal/keys/sk.json", "w") as f:
     json.dump(private_key_data, f)
 
 # Guardar la clave pública
-with open("Escenario3/ElGamal/pk.json", "w") as f:
+with open("Escenario3/ElGamal/keys/pk.json", "w") as f:
     json.dump(public_key_data, f)
 
 print(f"Llaves ElGamal generadas y guardadas en {current_directory} (1024 bits).")
