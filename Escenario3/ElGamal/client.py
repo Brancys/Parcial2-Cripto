@@ -18,7 +18,7 @@ while True:
     client_socket.sendall(encrypted_message)
 
     if message.lower() == b"exit":
-        print("Haz finalizado la comunicación.")
+        print("Cliente ha finalizado la comunicación.")
         break
 
     # Recibir respuesta del servidor
