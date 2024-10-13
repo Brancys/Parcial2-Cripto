@@ -1,12 +1,20 @@
 from Crypto.PublicKey import ElGamal
 from Crypto.Random import get_random_bytes
+import json
 import socket
 
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 client_socket.connect(('localhost', 65433))
 print("Conexión establecida con el servidor ElGamal.")
 
-public_key = ElGamal.import_key(client_socket.recv(1024))
+# Recibir los valores de la clave pública
+public_key_values = json.loads(client_socket.recv(1024).decode())
+
+public_key = ElGamal.construct((
+    int(public_key_values['p'], 16),
+    int(public_key_values['g'], 16),
+    int(public_key_values['y'], 16)
+))
 
 while True:
     message = input("Escribe tu mensaje (o 'exit' para salir): ").encode()
