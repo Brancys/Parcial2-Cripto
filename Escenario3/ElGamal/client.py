@@ -18,9 +18,6 @@ public_key_path = os.path.join(current_directory, "keys", "pk.json")
 with open(public_key_path, "r") as f:
     public_key_data = json.load(f)
 
-# Imprimir los valores de la clave pública para verificar
-print(f"Clave pública cargada: p={public_key_data['p']}, g={public_key_data['g']}, y={public_key_data['y']}")
-
 # Reconstruir la clave pública de ElGamal
 p = int(public_key_data['p'])
 g = int(public_key_data['g'])
@@ -28,56 +25,43 @@ y = int(public_key_data['y'])
 
 # Función para cifrar manualmente usando ElGamal
 def elgamal_encrypt(message, p, g, y):
-    # Convertir el mensaje a un número entero
     m = int.from_bytes(message.encode(), 'big')
-    
-    # Elegir un valor aleatorio k
     k = random.StrongRandom().randint(1, p-1)
-
-    # Generar c1 y c2
     c1 = pow(g, k, p)
     c2 = (m * pow(y, k, p)) % p
-
     return (c1, c2)
 
-# Crear un ciclo de comunicación
+# Crear un ciclo de comunicación secuencial
 while True:
     try:
-        # Escribir el mensaje a enviar
-        message = input("Escribe tu mensaje (o 'exit' para salir): ")
+        message = input("Escribe tu mensaje al servidor (o 'exit' para salir): ")
 
         if message.lower() == "exit":
-            print("Conexión cerrada por el cliente.")
+            print("Haz cerrado la conexión.")
             break
 
-        # Cifrar el mensaje con ElGamal manualmente
-        try:
-            c1, c2 = elgamal_encrypt(message, p, g, y)
-            print(f"Mensaje cifrado: c1={c1}, c2={c2}")
-        except Exception as encrypt_error:
-            print(f"Error durante el cifrado: {encrypt_error}")
-            continue
+        # Cifrar el mensaje
+        c1, c2 = elgamal_encrypt(message, p, g, y)
 
-        # Convertir los valores cifrados a cadenas Base64 para enviarlas
+        # Convertir los valores cifrados a Base64 y enviar al servidor
         cipher_text_b64_c1 = base64.b64encode(str(c1).encode()).decode()
         cipher_text_b64_c2 = base64.b64encode(str(c2).encode()).decode()
 
-        # Enviar los valores cifrados al servidor
         client_socket.sendall(cipher_text_b64_c1.encode())
         client_socket.sendall(cipher_text_b64_c2.encode())
 
         # Recibir la respuesta del servidor
         server_response = client_socket.recv(2048)
-
         if not server_response:
-            print("No se recibió respuesta del servidor.")
             break
 
-        # Decodificar la respuesta del servidor desde Base64
-        server_response = base64.b64decode(server_response)
-
-        # Mostrar la respuesta del servidor
-        print(f"Respuesta del servidor (descifrada): {server_response.decode('utf-8', errors='ignore')}")
+        # Decodificar la respuesta
+        server_response = base64.b64decode(server_response).decode('utf-8', errors='ignore')
+        if server_response.lower() == "exit":
+            print("Conexión cerrada por el servidor.")
+            break         
+        
+        print(f"Servidor: {server_response}")
 
     except Exception as e:
         print(f"Error durante la comunicación: {e}")
