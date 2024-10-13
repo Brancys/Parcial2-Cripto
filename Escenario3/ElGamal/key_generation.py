@@ -28,4 +28,4 @@ with open("Escenario3/ElGamal/keys/sk.json", "w") as f:
 with open("Escenario3/ElGamal/keys/pk.json", "w") as f:
     json.dump(public_key_data, f)
 
-print(f"Llaves ElGamal generadas y guardadas en {current_directory} (1024 bits).")
+print("Llaves ElGamal generadas y guardadas en Escenario3/ElGamal/keys (1024 bits).")
