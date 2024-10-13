@@ -2,8 +2,10 @@ from Crypto.PublicKey import ElGamal
 from Crypto.Random import get_random_bytes
 import socket
 
-# Generar llaves ElGamal (privada y pública)
-key = ElGamal.generate(2048)
+# Generar llaves ElGamal (privada y pública) usando la función generadora de números aleatorios
+key = ElGamal.generate(2048, get_random_bytes)
+
+# Serializar la llave pública
 public_key = key.publickey()
 
 # Crear socket
