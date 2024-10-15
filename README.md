@@ -2,33 +2,6 @@
 
 Este proyecto contiene la implementación de tres escenarios de criptografía utilizando Python y varias bibliotecas criptográficas como **PyCryptodome**. Cada escenario explora diferentes algoritmos de cifrado y conceptos fundamentales de criptografía, como el intercambio de llaves y el cifrado asimétrico y simétrico.
 
-## Estructura del Proyecto
-├───Escenario1
-│   ├───attack.py
-│   ├───client.py
-│   ├───parameters.json
-│   └───server.py
-├───Escenario2/
-│   ├───attacker.py
-│   ├───client.py
-│   └───server.py
-├───Escenario3/
-│   ├───Comparación/
-│   │   ├───comparison_results.json
-│   │   └───Time-and-size-comparison.py
-│   ├───ElGamal/
-│   │   ├───keys/
-│   │   │   ├───pk.json
-│   │   │   └───sk.json
-│   │   ├───client.py
-│   │   ├───key_generation.py
-│   │   └───server.py
-│   └───RSA OAEP/
-│       ├───client.py
-│       └───server.py
-├───Parcial 2.pdf
-└───README.md
-
 ## Escenario 1: Intercambio de Llaves Diffie-Hellman
 
 ### Descripción
