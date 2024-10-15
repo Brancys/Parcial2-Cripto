@@ -17,7 +17,7 @@ Se implementa el protocolo de **intercambio de llaves Diffie-Hellman** sobre el 
 - `server.py`: Código del servidor que ejecuta el protocolo Diffie-Hellman.
 - `parameters.json`: Archivo con los parámetros \( p \), \( q \) y \( g \).
 
-## Orden de ejecución
+### Orden de ejecución
 1. `server.py`
 2. `client.py`
 
@@ -39,7 +39,7 @@ Se implementa el protocolo de **intercambio de llaves Diffie-Hellman** utilizand
 - `server.py`: Código del servidor que ejecuta el protocolo Diffie-Hellman con curva elíptica P256.
 - `attacker.py`: Código del atacante que ejecuta el ataque MitM.
 
-## Orden de ejecución
+### Orden de ejecución
 1. `attacker.py`
 2. `server.py`
 3. `client.py`
@@ -65,8 +65,7 @@ Se mide la eficiencia de cada algoritmo en términos de la cantidad de datos tra
 ### Objetivo
 Comparar la eficiencia de la criptografía simétrica y asimétrica, tanto en términos de rendimiento como en la cantidad de datos transmitidos sobre la red.
 
-## Requisitos
-
+## RequisitosS
 Instalar las dependencias de Python necesarias ejecutando el siguiente comando:
 
 ```bash
