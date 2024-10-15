@@ -70,3 +70,4 @@ Instalar las dependencias de Python necesarias ejecutando el siguiente comando:
 
 ```bash
 pip install pycryptodome
+```
