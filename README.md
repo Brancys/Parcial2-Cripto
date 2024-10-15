@@ -20,6 +20,10 @@ Se implementa el protocolo de **intercambio de llaves Diffie-Hellman** sobre el 
 - `server.py`: Código del servidor que ejecuta el protocolo Diffie-Hellman.
 - `parameters.json`: Archivo con los parámetros \( p \), \( q \) y \( g \).
 
+## Orden de ejecución
+1. `server.py`
+2. `client.py`
+
 ### Objetivo
 Explorar cómo funciona el intercambio de llaves Diffie-Hellman sobre un grupo cíclico y cómo se puede usar una KDF para generar llaves simétricas a partir del secreto compartido.
 
@@ -37,6 +41,11 @@ Se implementa el protocolo de **intercambio de llaves Diffie-Hellman** utilizand
 - `client.py`: Código del cliente que ejecuta el protocolo Diffie-Hellman con curva elíptica P256.
 - `server.py`: Código del servidor que ejecuta el protocolo Diffie-Hellman con curva elíptica P256.
 - `attacker.py`: Código del atacante que ejecuta el ataque MitM.
+
+## Orden de ejecución
+1. `attacker.py`
+2. `server.py`
+3. `client.py`
 
 ### Objetivo
 Explorar cómo se implementa el intercambio de llaves con curvas elípticas y demostrar la vulnerabilidad ante un ataque MitM.
@@ -56,11 +65,6 @@ Se mide la eficiencia de cada algoritmo en términos de la cantidad de datos tra
 3. **Medición de tamaño**: Se mide el tamaño del mensaje cifrado.
 4. **Almacenamiento de resultados**: Los resultados se guardan en un archivo `encryption_results.json`.
 
-### Archivos
-- `client.py`: Código del cliente que realiza el cifrado y descifrado.
-- `server.py`: Código del servidor que realiza el cifrado y descifrado.
-- `encryption_results.json`: Resultados de la comparación de tiempos y tamaños de los algoritmos de cifrado.
-
 ### Objetivo
 Comparar la eficiencia de la criptografía simétrica y asimétrica, tanto en términos de rendimiento como en la cantidad de datos transmitidos sobre la red.
 
@@ -71,3 +75,6 @@ Instalar las dependencias de Python necesarias ejecutando el siguiente comando:
 ```bash
 pip install pycryptodome
 ```
+## Notas Adicionales
+-Las claves utilizadas en ElGamal se almacenan en formato JSON en el directorio ElGamal/keys.
+-Asegúrese de ejecutar cada script en el orden correcto para evitar conflictos entre los clientes y servidores.
