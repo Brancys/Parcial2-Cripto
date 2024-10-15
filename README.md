@@ -76,5 +76,5 @@ Instalar las dependencias de Python necesarias ejecutando el siguiente comando:
 pip install pycryptodome
 ```
 ## Notas Adicionales
--Las claves utilizadas en ElGamal se almacenan en formato JSON en el directorio ElGamal/keys.
--Asegúrese de ejecutar cada script en el orden correcto para evitar conflictos entre los clientes y servidores.
+- Las claves utilizadas en ElGamal se almacenan en formato JSON en el directorio ElGamal/keys.
+- Asegúrese de ejecutar cada script en el orden correcto para evitar conflictos entre los clientes y servidores.
