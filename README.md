@@ -3,7 +3,7 @@
 Este proyecto contiene la implementación de tres escenarios de criptografía utilizando Python y varias bibliotecas criptográficas como **PyCryptodome**. Cada escenario explora diferentes algoritmos de cifrado y conceptos fundamentales de criptografía, como el intercambio de llaves y el cifrado asimétrico y simétrico.
 
 ## Estructura del Proyecto
-
+├── ElGamal │ ├── keys │ │ ├── pk.json (Clave pública de ElGamal) │ │ ├── sk.json (Clave privada de ElGamal) │ ├── client.py (Cliente para el protocolo ElGamal) │ ├── server.py (Servidor para el protocolo ElGamal) │ ├── key_generation.py (Generación de claves ElGamal) ├── Escenario1 │ ├── client.py (Cliente para el escenario 1) │ ├── server.py (Servidor para el escenario 1) │ ├── parameters.json (Parámetros Diffie-Hellman) ├── Escenario2 │ ├── client.py (Cliente para el escenario 2) │ ├── server.py (Servidor para el escenario 2) │ ├── attacker.py (Atacante MitM para el escenario 2) ├── Escenario3 │ ├── client.py (Cliente para el escenario 3 - ElGamal) │ ├── server.py (Servidor para el escenario 3 - ElGamal) │ ├── encryption_results.json (Resultados de la comparación de cifrados) ├── README.md
 
 ## Escenario 1: Intercambio de Llaves Diffie-Hellman
 
