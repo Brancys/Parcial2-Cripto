@@ -18,7 +18,7 @@ client_public_bytes = client_public_key.public_bytes(
 
 # Crear el socket del cliente
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-client_socket.connect(('localhost', 65432))
+client_socket.connect(('10.20.42.68', 65432))
 print("Conexión establecida con el servidor.")
 
 # Enviar la llave pública del cliente al servidor
