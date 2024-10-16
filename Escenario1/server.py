@@ -40,7 +40,7 @@ def decrypt_message(shared_key, ciphertext):
     return plaintext.decode()
 
 # Cargar el conjunto de parametros i desde el archivo JSON
-params = load_parameters(0) # Se usa el conjunto 0 de parámetros en este caso
+params = load_parameters(4) # Se usa el conjunto 0 de parámetros en este caso
 p = params["p"]
 g = params["g"]
 q = params["q"]
