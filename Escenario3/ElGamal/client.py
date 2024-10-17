@@ -14,7 +14,7 @@ print("Conexión establecida con el servidor ElGamal.")
 current_directory = os.path.dirname(os.path.abspath(__file__))
 public_key_path = os.path.join(current_directory, "keys", "pk.json")
 
-# Cargar la clave pública
+# Cargar la clave pública (se asume que el server generó las claves y las compartió)
 with open(public_key_path, "r") as f:
     public_key_data = json.load(f)
 

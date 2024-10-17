@@ -14,7 +14,8 @@ print("Servidor ElGamal en espera...")
 current_directory = os.path.dirname(os.path.abspath(__file__))
 private_key_path = os.path.join(current_directory, "keys", "sk.json")
 
-# Cargar la clave privada
+# La llave es cargada, ya que la generación de claves  se realizó en un script diferente, 
+# por el tiempo excesivo que toma la generación de claves
 with open(private_key_path, "r") as f:
     private_key_data = json.load(f)
 
