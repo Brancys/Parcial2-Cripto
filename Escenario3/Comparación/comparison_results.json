@@ -1,22 +1,22 @@
 {
-  "ElGamal": {
-    "encryption_time": 0.010998964309692383,
-    "decryption_time": 0.012001752853393555,
-    "encrypted_message_size": 616
-  },
-  "Salsa20": {
-    "encryption_time": 0.0010020732879638672,
-    "decryption_time": 0.0,
-    "encrypted_message_size": 137
-  },
-  "AES-256": {
-    "encryption_time": 0.001001119613647461,
-    "decryption_time": 0.0,
-    "encrypted_message_size": 144
-  },
-  "RSA_OAEP": {
-    "encryption_time": 0.0019958019256591797,
-    "decryption_time": 0.0060007572174072266,
-    "encrypted_message_size": 256
-  }
+    "ElGamal": {
+        "encryption_time": 0.009105920791625977,
+        "decryption_time": 0.009951591491699219,
+        "encrypted_message_size": 617
+    },
+    "Salsa20": {
+        "encryption_time": 0.0019500255584716797,
+        "decryption_time": 0.0,
+        "encrypted_message_size": 137
+    },
+    "AES-256": {
+        "encryption_time": 0.0,
+        "decryption_time": 0.0,
+        "encrypted_message_size": 144
+    },
+    "RSA_OAEP": {
+        "encryption_time": 0.0010945796966552734,
+        "decryption_time": 0.003939390182495117,
+        "encrypted_message_size": 256
+    }
 }
