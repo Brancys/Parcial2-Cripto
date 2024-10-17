@@ -84,7 +84,7 @@ Comparar la eficiencia de la criptografía simétrica y asimétrica, tanto en t�
 Instalar las dependencias de Python necesarias ejecutando el siguiente comando:
 
 ```bash
-pip install pycryptodome
+pip install pycryptodome cryptography
 ```
 
 ## Notas Adicionales
