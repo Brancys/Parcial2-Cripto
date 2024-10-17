@@ -31,7 +31,7 @@ server_public_bytes = server_public_key.public_bytes(
 
 # Configurar el socket para escuchar conexiones entrantes
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-server_socket.bind(('192.168.1.15', 65432))  # Cambiar la IP si es necesario
+server_socket.bind(('192.168.1.15', 65432))  # IP del servidor y puerto
 server_socket.listen()
 
 print("Servidor en espera de conexiones...")

