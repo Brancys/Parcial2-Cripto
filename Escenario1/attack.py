@@ -1,31 +1,24 @@
 import math
+import time
 from hashlib import sha256
 from Crypto.Cipher import Salsa20
-import time
 
 # Parámetros obtenidos por el atacante (mediante Wireshark o similar)
-p = 227  # Primo p
-g = 12   # Generador g
-public_key_server = 3138313930353836363635323338303333343437323135383336373233353930373338313530383634323338353032303236373032343333313834353432313733343235383739333131363336303835333439323538353031393835363535303832383631363736393138353631303234303830393939343638343939303635333437363032303339333538373136303330333837333933383631373336353133363639323436343838303234313734343130333534393138353431373332363332343835323639313339333532373532373236343234393633353232383138303938383330373730323037353333393538373733353632353539303635343330303438323731303530343434373437313430353231363036383038323631353335363532343132333632313534383837303230  # Llave pública del servidor
-public_key_client = 3630323330313631303430373334363337333533353534313137383736353138313238353334373332353435303333383535353131353431353530343432323332333237303632313433353631303531313731303439323137333837393039363735313238373032393336383434323935363733303638363038343132343535323230333235343532353830323630333037303131313936353838373538313034343337393439393331323836393730323030303938383731393937393132313036343539333934373739353531383232323036333836393331363038313232383638393137383335343735343430343833343739303332343439343534363331343438343037383839333937313930393135353736383637333237313130373736303731393336363230353538393036303638  # Llave pública del cliente
+p = 137264501074495181280555132673901931323332164724815133317526595627537522562067022989603699054588480389773079016561323343477054349336451609284971148159280724829128531552270321268457769520042856144429883077983691811201653430137376919960068969990507421437958462547891425943025305810160065324145921753228735283903  # Primo p
+g = 40746562294764965373407784234554073062674073565341303353016758609344799210654104763969824808430330931109448281620048720300276969942539907157417365502013807736680793541720602226570436490901677489617911977499169334249484471027700239163555304280499401445437347279647322836086848012965178946904650279473615383579   # Generador g
+public_key_server = 97886934076056264740232187787270319681106011816775524525995001258774552209046715067296773066021057523391072070988558051462379807677957593901103543600529905336590450527552190356508733909253914618986619477084897519277474375261612960593585819814005056263112517340738709486062772621811164149735182492708083511108  # Llave pública del servidor
+public_key_client = 134405357736497921739626999143801705151095756195904950315911425582378630597408017855022564990002159473767512098442249029001786600589763274400287727028582422129718652092779981415284520509538189997080673665909072852854751266720170194948315743629797454034421428888884269644789521163651490491436684499512858340505  # Llave pública del cliente
+ciphertext = b'\xce\xa0H\xadxxVW\xbc(\xceN'  # Mensaje cifrado interceptado
 
-# Mensaje cifrado en formato hexadecimal que se intercepta (convertido a hex)
-ciphertext_hex = "308a2ab095e04b7b0f77d630e0cf..."  # Mensaje cifrado en hexadecimal
-
-# Convertir el mensaje cifrado de hexadecimal a bytes
-ciphertext = bytes.fromhex(ciphertext_hex)
-
-# Separar el nonce y el mensaje cifrado
+# Salsa20 nonce and ciphertext splitting
 nonce = ciphertext[:8]
 ciphertext = ciphertext[8:]
 
+# Definir el límite de tiempo de una hora (3600 segundos)
 time_limit = 3600  # 1 hora en segundos
 start_time = time.time()
 
-# Función para convertir bytes a hex
-def bytes_to_hex(b):
-    return b.hex()
-
+# Algoritmo Baby-step Giant-step para resolver el logaritmo discreto
 def baby_step_giant_step_with_timeout(p, g, h, time_limit):
     m = math.isqrt(p) + 1  # Calcular m tal que m^2 >= p
 
@@ -37,12 +30,11 @@ def baby_step_giant_step_with_timeout(p, g, h, time_limit):
     # Calcular g^(-m) mod p
     g_inv_m = pow(g, -m, p)
 
-    # giant steps
+    # Giant steps
     for i in range(m):
-        # Verificar si se ha excedido el tiempo límite
         elapsed_time = time.time() - start_time
         if elapsed_time > time_limit:
-            print("Tiempo límite excedido.")
+            print(f"Tiempo límite excedido después de {elapsed_time:.2f} segundos. No fue posible encontrar la llave privada.")
             return None
 
         # Calcular y
@@ -50,26 +42,32 @@ def baby_step_giant_step_with_timeout(p, g, h, time_limit):
         if y in baby_steps:
             return i * m + baby_steps[y]
 
+        # Mostrar tiempo transcurrido cada vez que se da un giant step
+        print(f"Tiempo transcurrido: {elapsed_time:.2f} segundos")
+
     return None  # No se encontró la llave privada
 
 # Intentar resolver el problema del logaritmo discreto para obtener la llave privada del servidor
 private_key_server = baby_step_giant_step_with_timeout(p, g, public_key_server, time_limit)
 
+total_time = time.time() - start_time  # Tiempo total transcurrido
+
 if private_key_server is not None:
     print(f"El atacante encontró la llave privada del servidor: {private_key_server}")
     
+    # Calcular el secreto compartido
     shared_secret = pow(public_key_client, private_key_server, p)
     print(f"El secreto compartido es: {shared_secret}")
 
+    # Derivar la llave simétrica utilizando SHA-256
     shared_key = sha256(str(shared_secret).encode()).digest()
     print(f"La llave simétrica derivada es: {shared_key}")
 
+    # Descifrar el mensaje usando Salsa20
     cipher = Salsa20.new(key=shared_key, nonce=nonce)
     plaintext = cipher.decrypt(ciphertext)
-    
-    # Convertir el mensaje descifrado a hexadecimal
-    hex_plaintext = bytes_to_hex(plaintext)
-    print(f"Mensaje descifrado en hexadecimal: {hex_plaintext}")
-
+    print(f"Mensaje descifrado: {plaintext.decode()}")
 else:
-    print("El atacante no pudo encontrar la llave privada en menos de una hora.")
+    print("No fue posible encontrar la llave privada.")
+
+print(f"Tiempo total transcurrido: {total_time:.2f} segundos")

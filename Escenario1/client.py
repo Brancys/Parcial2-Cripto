@@ -48,7 +48,7 @@ q = params["q"]
 # Crear socket del cliente
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 print("Intentando conectar con el servidor...")
-client_socket.connect(('10.20.42.68', 65432))  # Conectarse al servidor en localhost y puerto 65432
+client_socket.connect(('localhost', 65432))  # Conectarse al servidor en localhost y puerto 65432
 print("Conexión establecida con el servidor.")
 
 # Generar las llaves del cliente (privada y pública) usando q
@@ -77,6 +77,7 @@ while True:
 
     # Recibir respuesta del servidor
     ciphertext = client_socket.recv(1024)
+    print("Mensaje cifrado: ", ciphertext)
     decrypted_message = decrypt_message(shared_key_client, ciphertext)
     print(f"Servidor: {decrypted_message}")
 

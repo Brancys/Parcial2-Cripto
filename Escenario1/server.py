@@ -47,7 +47,7 @@ q = params["q"]
 
 # Crear socket del servidor
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-server_socket.bind(('0.0.0.0', 65432))  # Escuchar en localhost y puerto 65432
+server_socket.bind(('localhost', 65432))  # Escuchar en localhost y puerto 65432
 server_socket.listen()
 
 print("Servidor en espera de conexiones en localhost:65432...")
@@ -61,9 +61,11 @@ private_key_server, public_key_server = diffie_hellman_keypair(p, g, q)
 
 # Enviar la llave pública del servidor al cliente
 conn.sendall(str(public_key_server).encode())
+print("Llave pública del servidor: ", public_key_server)
 
 # Recibir la llave pública del cliente
 public_key_client = int(conn.recv(1024).decode())
+print("Llave pública del cliente: ", public_key_client)
 
 # Generar la llave compartida
 shared_key_server = generate_shared_key(private_key_server, public_key_client, p)
@@ -73,6 +75,7 @@ print("Llave compartida generada en el servidor.")
 while True:
     # Recibir mensaje cifrado del cliente
     ciphertext = conn.recv(1024)
+    print("Mensaje cifrado: ", ciphertext)
     if not ciphertext:
         break
     decrypted_message = decrypt_message(shared_key_server, ciphertext)

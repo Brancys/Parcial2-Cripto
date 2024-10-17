@@ -39,7 +39,7 @@ server_socket.bind(('0.0.0.0', 65432))  # Escuchar en localhost y puerto 65432
 server_socket.listen()
 
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-client_socket.connect(('10.20.42.68', 65433))  # Conectar al servidor real
+client_socket.connect(('10.20.58.89', 65433))  # Conectar al servidor real
 
 print("Atacante en espera de conexiones...")
 
