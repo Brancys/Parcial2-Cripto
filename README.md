@@ -79,7 +79,7 @@ Se mide la eficiencia de cada algoritmo en términos de la cantidad de datos tra
 
 Comparar la eficiencia de la criptografía simétrica y asimétrica, tanto en términos de rendimiento como en la cantidad de datos transmitidos sobre la red.
 
-## RequisitosS
+## Requisitos
 
 Instalar las dependencias de Python necesarias ejecutando el siguiente comando:
 
