@@ -2,13 +2,15 @@ import math
 import time
 from hashlib import sha256
 from Crypto.Cipher import Salsa20
+import json
+import os
 
 # Parámetros obtenidos por el atacante (mediante Wireshark o similar)
-p = 137264501074495181280555132673901931323332164724815133317526595627537522562067022989603699054588480389773079016561323343477054349336451609284971148159280724829128531552270321268457769520042856144429883077983691811201653430137376919960068969990507421437958462547891425943025305810160065324145921753228735283903  # Primo p
-g = 40746562294764965373407784234554073062674073565341303353016758609344799210654104763969824808430330931109448281620048720300276969942539907157417365502013807736680793541720602226570436490901677489617911977499169334249484471027700239163555304280499401445437347279647322836086848012965178946904650279473615383579   # Generador g
-public_key_server = 97886934076056264740232187787270319681106011816775524525995001258774552209046715067296773066021057523391072070988558051462379807677957593901103543600529905336590450527552190356508733909253914618986619477084897519277474375261612960593585819814005056263112517340738709486062772621811164149735182492708083511108  # Llave pública del servidor
-public_key_client = 134405357736497921739626999143801705151095756195904950315911425582378630597408017855022564990002159473767512098442249029001786600589763274400287727028582422129718652092779981415284520509538189997080673665909072852854751266720170194948315743629797454034421428888884269644789521163651490491436684499512858340505  # Llave pública del cliente
-ciphertext = b'\xce\xa0H\xadxxVW\xbc(\xceN'  # Mensaje cifrado interceptado
+p = 13926985804350796967  # Primo p
+g = 4460925131279825939   # Generador g
+public_key_server = 10105297780866266891  # Llave pública del servidor
+public_key_client = 7476845468886874535  # Llave pública del cliente
+ciphertext = b'\xf8cf\xca\xcbY\x08\x88\t&V>\xd4\x18.\xd7\x9e\xe8\x7f\x93\xaa/\x94\xbc\x05%h' # Mensaje cifrado interceptado
 
 # Salsa20 nonce and ciphertext splitting
 nonce = ciphertext[:8]
@@ -18,32 +20,59 @@ ciphertext = ciphertext[8:]
 time_limit = 3600  # 1 hora en segundos
 start_time = time.time()
 
+# Obtener el directorio actual del script
+current_directory = os.path.dirname(os.path.abspath(__file__))
+baby_steps_file = os.path.join(current_directory, "baby_steps.json")
+
+# Función para escribir los baby steps en un archivo JSON
+def write_baby_step_to_file(step, value, filename):
+    with open(filename, "a") as f:
+        json.dump({str(step): value}, f)
+        f.write("\n")  # Añadir salto de línea para cada entrada
+
+# Función para buscar un valor en el archivo JSON (lectura durante los giant steps)
+def find_baby_step_in_file(value, filename):
+    with open(filename, "r") as f:
+        for line in f:
+            step = json.loads(line)
+            if str(value) in step:
+                return step[str(value)]
+    return None
+
 # Algoritmo Baby-step Giant-step para resolver el logaritmo discreto
 def baby_step_giant_step_with_timeout(p, g, h, time_limit):
     m = math.isqrt(p) + 1  # Calcular m tal que m^2 >= p
 
-    # Crear un diccionario para almacenar g^j mod p para j en [0, m-1]
-    baby_steps = {}
+    # Si el archivo ya existe, eliminarlo para evitar conflictos previos
+    if os.path.exists(baby_steps_file):
+        os.remove(baby_steps_file)
+
+    print("Creando y guardando los baby steps en el archivo...")
+
+    # Crear y escribir los baby steps en un archivo
     for j in range(m):
-        baby_steps[pow(g, j, p)] = j
+        value = pow(g, j, p)
+        write_baby_step_to_file(value, j, baby_steps_file)
+
+    print("Baby steps creados y guardados en el archivo.")
 
     # Calcular g^(-m) mod p
     g_inv_m = pow(g, -m, p)
+    print("Iniciando giant-steps...")
 
     # Giant steps
     for i in range(m):
         elapsed_time = time.time() - start_time
         if elapsed_time > time_limit:
-            print(f"Tiempo límite excedido después de {elapsed_time:.2f} segundos. No fue posible encontrar la llave privada.")
+            print(f"Tiempo limite alcanzado ({elapsed_time:.2f} segundos).")
             return None
 
         # Calcular y
         y = (h * pow(g_inv_m, i, p)) % p
-        if y in baby_steps:
-            return i * m + baby_steps[y]
-
-        # Mostrar tiempo transcurrido cada vez que se da un giant step
-        print(f"Tiempo transcurrido: {elapsed_time:.2f} segundos")
+        # Buscar el valor en el archivo en lugar de en memoria
+        baby_step = find_baby_step_in_file(y, baby_steps_file)
+        if baby_step is not None:
+            return i * m + int(baby_step)
 
     return None  # No se encontró la llave privada
 
