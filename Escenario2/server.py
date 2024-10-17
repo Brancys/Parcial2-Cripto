@@ -31,7 +31,7 @@ server_public_bytes = server_public_key.public_bytes(
 
 # Configurar el socket para escuchar conexiones entrantes
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-server_socket.bind(('192.168.1.14', 65432))  # Cambiar la IP si es necesario
+server_socket.bind(('192.168.1.15', 65432))  # Cambiar la IP si es necesario
 server_socket.listen()
 
 print("Servidor en espera de conexiones...")
@@ -40,12 +40,12 @@ print("Servidor en espera de conexiones...")
 conn, addr = server_socket.accept()
 print(f"Conexión establecida con: {addr}")
 
+# Enviar la llave pública del servidor al cliente
+conn.sendall(server_public_bytes)
+
 # Recibir la llave pública del cliente
 client_public_bytes = conn.recv(1024)
 client_public_key = ec.EllipticCurvePublicKey.from_encoded_point(ec.SECP256R1(), client_public_bytes)
-
-# Enviar la llave pública del servidor al cliente
-conn.sendall(server_public_bytes)
 
 # Establecer la llave compartida
 shared_key = server_private_key.exchange(ec.ECDH(), client_public_key)
